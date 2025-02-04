@@ -19,7 +19,7 @@ public class ProductPageSteps {
         pageManager.getProductPage().checkSearchResultCountLess();
     }
 
-    @И("^Проверим, что в поисковой выдаче не более \"(.+)\" товаров$")
+    @И("^Проверим, что в поисковой выдаче не более (\\d+) товаров$")
     public void checkSearchResultCountLess(int count) {
         pageManager.getProductPage().checkSearchResultCountLess(count);
     }

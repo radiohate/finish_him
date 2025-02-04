@@ -4,6 +4,7 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class ProductPage extends BasePage {
 
     @FindBy(xpath = "//*[@class='rendererWrapper']//*[contains(@class,'Card_listing')]")
     private List<WebElement> searchResultList;
+
+    @FindBy(xpath = "//*[@class='rendererWrapper']//*[contains(@class,'Card_listing')][1]//a[contains(@class,'CardText_link')]/.")
+    private WebElement firstSearchResult;
 
     @FindBy(xpath = "//input[@aria-label='Поиск']")
     private WebElement searchLineInput;
@@ -65,6 +69,7 @@ public class ProductPage extends BasePage {
      */
     @Step("Проверить, что в поисковой выдаче не более {0} товаров")
     public ProductPage checkSearchResultCountLess(int expectedCount) {
+        PageFactory.initElements(driver, searchResultList);
         int actualCount = searchResultList.size();
         assertTrue(String.format("Должно отображаться меньше %s товаров. По факту отображается %s товаров", expectedCount, actualCount),
                 actualCount <= expectedCount);
@@ -78,8 +83,7 @@ public class ProductPage extends BasePage {
      */
     @Step("Сохранить наименование первого товара в списке")
     public String readFirstResultProductName() {
-        WebElement firstResult = searchResultList.get(0);
-        return firstResult.getAttribute("title");
+        return waitUtilElementToBeVisible(firstSearchResult).getText();
     }
 
     /**
@@ -92,21 +96,9 @@ public class ProductPage extends BasePage {
     public ProductPage performSearch(String value) {
         fillInputField(searchLineInput, value);
         waitUtilElementToBeClickable(searchIcon).click();
+        waitSearchResult(value);
         return this;
     }
-
-    /**
-     * Проверить, что в поисковой выдаче ровно ожадмемое количество товаров
-     *
-     * @param expectedCount ожидаемое количество
-     * @return SearchResultPage
-     */
-//    @Step("Проверить, что в поисковой выдаче ровно {0} товаров")
-//    public ProductPage checkSearchResultCountEquals(int expectedCount) {
-//        int actualCount = searchResultList.size();
-//        assertEquals(String.format("Должно отображаться ровно %s товаров", expectedCount), expectedCount, actualCount);
-//        return this;
-//    }
 
     /**
      * Проверить, что наименование товара соответствует сохраненному значению
@@ -116,10 +108,9 @@ public class ProductPage extends BasePage {
      */
     @Step("Проверить, что наименование товара соответствует значению {0}")
     public ProductPage checkSearchResultValue(String expectedValue) {
-        WebElement singleResult = searchResultList.get(0);
         assertEquals("Наименование товара НЕ соответствует сохраненному значению!",
                 expectedValue,
-                singleResult.getText());
+                waitUtilElementToBeVisible(firstSearchResult).getText());
         return this;
     }
 }

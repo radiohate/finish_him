@@ -11,6 +11,7 @@ import ru.appline.framework.managers.PageManager;
 import ru.appline.framework.managers.TestPropManager;
 
 import static org.junit.Assert.assertEquals;
+import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 import static ru.appline.framework.managers.DriverManager.getDriverManager;
 
 /**
@@ -124,7 +125,7 @@ public class BasePage {
      * @see ExpectedConditions
      */
     protected WebElement waitUtilElementToBeClickable(WebElement element) {
-        return wait.until(ExpectedConditions.elementToBeClickable(element));
+        return wait.until(elementToBeClickable(element));
     }
 
     /**
@@ -133,7 +134,7 @@ public class BasePage {
      * @param element - веб элемент который мы ожидаем что будет  виден на странице
      */
     protected WebElement waitUtilElementToBeVisible(WebElement element) {
-        return wait.until(ExpectedConditions.visibilityOf(element));
+        return wait.until(visibilityOf(element));
     }
 
 
@@ -145,7 +146,7 @@ public class BasePage {
      */
     protected void fillInputField(WebElement field, String value) {
         scrollToElementJs(field);
-        waitUtilElementToBeClickable(field).click();
+        waitUtilElementToBeVisible(field);
         field.sendKeys(value);
     }
 
@@ -167,11 +168,12 @@ public class BasePage {
      * @param checkBoxElement элемент типа checkBox
      * @param targetState     состояние, в которое хотим установить checkBox
      */
-    public static void setCheckboxInState(WebElement checkBoxElement, boolean targetState) {
+    public void setCheckboxInState(WebElement checkBoxElement, WebElement elementForClick, boolean targetState) {
         // Проверяем, находится ли checkbox в нужном состоянии
         if (checkBoxElement.isSelected() != targetState) {
             // Если не находится, кликаем по нему
-            checkBoxElement.click();
+            scrollWithOffset(elementForClick, 0, -500);
+            waitUtilElementToBeClickable(elementForClick).click();
         }
         assertEquals(String.format("Поле заполнено %s некорректно. Ожидали значение <%s>,", checkBoxElement, targetState),
                 checkBoxElement.isSelected(),

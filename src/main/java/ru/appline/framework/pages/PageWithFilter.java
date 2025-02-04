@@ -10,7 +10,7 @@ import org.openqa.selenium.support.FindBy;
  */
 public class PageWithFilter extends BasePage {
     private static final String SEARCH_FIELD_XPATH = "//*[text()='%s']/ancestor::section//input[@placeholder='Поиск']";
-    private static final String SELECT_FOUND_XPATH = "//*[contains(@class,'Checkbox_label')]//*[text()='%s']/../../input[@type='checkbox']";
+    private static final String SELECT_FOUND_XPATH = "//input[@type='checkbox' and @value='%s']";
 
     @FindBy(xpath = "//*[contains(@class, 'RangeSelector_inputs')]//input[@name='min']")
     private WebElement priceMinInputField;
@@ -35,8 +35,9 @@ public class PageWithFilter extends BasePage {
     public ProductPage fillManufacturerField(String manufacturer) {
         WebElement searchInputField = driver.findElement(By.xpath(String.format(SEARCH_FIELD_XPATH, "Производитель")));
         fillInputField(searchInputField, manufacturer);
-        WebElement selectFoundCheckbox = driver.findElement(By.xpath(String.format(SELECT_FOUND_XPATH, manufacturer)));
-        setCheckboxInState(selectFoundCheckbox, true);
+        WebElement checkbox = driver.findElement(By.xpath(String.format(SELECT_FOUND_XPATH, manufacturer)));
+        WebElement elementForClick = driver.findElement(By.xpath(String.format(SELECT_FOUND_XPATH + "/../label", manufacturer)));
+        setCheckboxInState(checkbox, elementForClick, true);
         return pageManager.getProductPage();
     }
 }

@@ -43,8 +43,7 @@ public class HomePage extends BasePage {
     public HomePage selectBaseMenu(String nameBaseMenu) {
         // Комплектующие для ПК, Периферия
         WebElement menuItem = driver.findElement(By.xpath(String.format(BASE_MENU_ITEM_XPATH, nameBaseMenu)));
-//        waitUtilElementToBeClickable(menuItem).click();
-        new Actions(driver).moveToElement(waitUtilElementToBeClickable(menuItem));
+        waitUtilElementToBeClickable(menuItem).click();
         return this;
     }
 
